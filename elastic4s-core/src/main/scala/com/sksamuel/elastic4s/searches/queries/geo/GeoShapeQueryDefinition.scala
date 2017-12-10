@@ -4,14 +4,12 @@ import com.sksamuel.elastic4s.{DistanceUnit, Index}
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import com.sksamuel.exts.OptionImplicits._
 
-trait Shape
 
-sealed trait InlineSh extends Shape {
+sealed trait ShapeDefinition {
   def geoShapeType: GeoShapeType
 }
 
-sealed trait SingleShape extends InlineSh
-
+sealed trait SingleShape extends ShapeDefinition
 
 case class PointShape(coordinate: (Double,Double)) extends SingleShape {
   def geoShapeType: GeoShapeType = GeoShapeType.POINT
@@ -21,7 +19,10 @@ case class CircleShape(coordinate: (Double,Double), distance: (Double,DistanceUn
   def geoShapeType: GeoShapeType = GeoShapeType.CIRCLE
 }
 
-case class PolygonShape(coordinate: Seq[(Double,Double)], holes: Option[Seq[(Double,Double)]]) extends SingleShape {
+case class PolygonShape(
+  coordinates: Seq[(Double,Double)],
+  holes: Option[Seq[(Double,Double)]] = None
+) extends SingleShape {
   def geoShapeType: GeoShapeType = GeoShapeType.POLYGON
 }
 
@@ -45,11 +46,13 @@ case class MultiPolygonShape(coordinate: Seq[(Seq[(Double,Double)],Option[Seq[(D
   def geoShapeType: GeoShapeType = GeoShapeType.MULTIPOLYGON
 }
 
-case class GeometryCollectionShape(shapes: Seq[SingleShape]) extends InlineSh {
+sealed trait CollectionShape extends ShapeDefinition
+case class GeometryCollectionShape(shapes: Seq[SingleShape]) extends CollectionShape {
   def geoShapeType: GeoShapeType = GeoShapeType.GEOMETRYCOLLECTION
 }
 
-  case class InlineShape(geoShapeType: GeoShapeType, coordinates: Seq[(Double, Double)]) extends Shape
+sealed trait Shape
+case class InlineShape(shape: ShapeDefinition) extends Shape
 case class PreindexedShape(id: String, index: Index, `type`: String, path: String) extends Shape
 
 case class GeoShapeQueryDefinition(field: String,
@@ -65,7 +68,7 @@ case class GeoShapeQueryDefinition(field: String,
   def queryName(queryName: String): GeoShapeQueryDefinition = copy(queryName = queryName.some)
   def strategy(strategy: SpatialStrategy): GeoShapeQueryDefinition = copy(strategy = strategy.some)
 
-  def inlineShape(shapeType: GeoShapeType, coords: Seq[(Double, Double)]) = copy(shape = InlineShape(shapeType, coords))
+  def inlineShape(shape: ShapeDefinition) = InlineShape(shape)
   def preindexedShape(id: String, index: Index, `type`: String, path: String) = copy(shape = PreindexedShape(id, index, `type`, path))
 
   def ignoreUnmapped(ignore: Boolean): GeoShapeQueryDefinition = copy(ignoreUnmapped = ignore.some)
