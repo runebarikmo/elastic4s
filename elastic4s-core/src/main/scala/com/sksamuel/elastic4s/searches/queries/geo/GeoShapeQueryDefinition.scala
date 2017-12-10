@@ -1,11 +1,55 @@
 package com.sksamuel.elastic4s.searches.queries.geo
 
-import com.sksamuel.elastic4s.Index
+import com.sksamuel.elastic4s.{DistanceUnit, Index}
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
 import com.sksamuel.exts.OptionImplicits._
 
 trait Shape
-case class InlineShape(geoShapeType: GeoShapeType, coordinates: Seq[(Double, Double)]) extends Shape
+
+sealed trait InlineSh extends Shape {
+  def geoShapeType: GeoShapeType
+}
+
+sealed trait SingleShape extends InlineSh
+
+
+case class PointShape(coordinate: (Double,Double)) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.POINT
+}
+
+case class CircleShape(coordinate: (Double,Double), distance: (Double,DistanceUnit)) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.CIRCLE
+}
+
+case class PolygonShape(coordinate: Seq[(Double,Double)], holes: Option[Seq[(Double,Double)]]) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.POLYGON
+}
+
+case class MultiPointShape(coordinate: Seq[(Double,Double)]) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.MULTIPOINT
+}
+
+case class LineStringShape(coordinate: Seq[(Double,Double)]) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.LINESTRING
+}
+
+case class EnvelopeShape(coordinate: Seq[(Double,Double)]) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.ENVELOPE
+}
+
+case class MultiLineStringShape(coordinates: Seq[Seq[(Double,Double)]]) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.MULTILINESTRING
+}
+
+case class MultiPolygonShape(coordinate: Seq[(Seq[(Double,Double)],Option[Seq[(Double,Double)]])]) extends SingleShape {
+  def geoShapeType: GeoShapeType = GeoShapeType.MULTIPOLYGON
+}
+
+case class GeometryCollectionShape(shapes: Seq[SingleShape]) extends InlineSh {
+  def geoShapeType: GeoShapeType = GeoShapeType.GEOMETRYCOLLECTION
+}
+
+  case class InlineShape(geoShapeType: GeoShapeType, coordinates: Seq[(Double, Double)]) extends Shape
 case class PreindexedShape(id: String, index: Index, `type`: String, path: String) extends Shape
 
 case class GeoShapeQueryDefinition(field: String,
