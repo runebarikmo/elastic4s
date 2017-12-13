@@ -51,10 +51,10 @@ object GeoShapeQueryBodyFn {
         builder.array("coordinates", Array(x,y))
         builder
 
-      case s@EnvelopeShape(coords) =>
+      case s@EnvelopeShape((ulX,ulY), (lrX,lrY)) =>
         val builder = XContentFactory.jsonBuilder()
         builder.field("type", s.geoShapeType.toString.toLowerCase)
-        builder.array("coordinates", coords.map { case (a,b) => Array(a,b) }.toArray)
+        builder.array("coordinates", Array(Array(ulX,ulY),Array(lrX,lrY)))
         builder
 
       case s@MultiPointShape(coords) =>
@@ -63,9 +63,10 @@ object GeoShapeQueryBodyFn {
         builder.array("coordinates", coords.map { case (a,b) => Array(a,b) }.toArray)
         builder
 
-      case s@LineStringShape(coords) =>
+      case s@LineStringShape(first,second,remaining @ _*) =>
         val builder = XContentFactory.jsonBuilder()
         builder.field("type", s.geoShapeType.toString.toLowerCase)
+        val coords = first :: second :: remaining.toList
         builder.array("coordinates", coords.map { case (a,b) => Array(a,b) }.toArray)
         builder
 
@@ -89,10 +90,10 @@ object GeoShapeQueryBodyFn {
         builder.array("coordinates", coords.map(_.map { case (a,b) => Array(a,b) }.toArray).toArray)
         builder
 
-      case s@MultiPolygonShape(coordinates) =>
+      case s@MultiPolygonShape(polygons) =>
         val builder = XContentFactory.jsonBuilder()
         builder.field("type", s.geoShapeType.toString.toLowerCase)
-        val coords = coordinates.map { case (coords,holes) =>
+        val coords = polygons.map { case (coords,holes) =>
           holes.fold(Seq(coords))(h => Seq(coords,h)).map(_.map { case (a,b) => Array(a,b) }.toArray).toArray
         }
         builder.array("coordinates",coords.toArray)

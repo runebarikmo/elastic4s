@@ -61,12 +61,12 @@ class XContentBuilder(root: JsonNode) {
     doubles.foreach { second =>
       val secondArray = array.addArray()
       second.foreach { third =>
-        val thirdArray = array.addArray()
+        val thirdArray = secondArray.addArray()
         third.foreach { inner =>
           val value = thirdArray.addArray()
           inner.foreach(value.add)
         }
-        secondArray.add(thirdArray)
+
       }
     }
     endArray()

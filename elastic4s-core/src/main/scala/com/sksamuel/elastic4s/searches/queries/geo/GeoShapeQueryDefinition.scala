@@ -30,11 +30,11 @@ case class MultiPointShape(coordinate: Seq[(Double,Double)]) extends SingleShape
   def geoShapeType: GeoShapeType = GeoShapeType.MULTIPOINT
 }
 
-case class LineStringShape(coordinate: Seq[(Double,Double)]) extends SingleShape {
+case class LineStringShape(p1: (Double,Double), p2: (Double,Double), extraPath: (Double,Double)*) extends SingleShape {
   def geoShapeType: GeoShapeType = GeoShapeType.LINESTRING
 }
 
-case class EnvelopeShape(coordinate: Seq[(Double,Double)]) extends SingleShape {
+case class EnvelopeShape(upperLeft: (Double,Double), lowerRight: (Double,Double)) extends SingleShape {
   def geoShapeType: GeoShapeType = GeoShapeType.ENVELOPE
 }
 
