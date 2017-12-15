@@ -71,6 +71,26 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
 
   }
 
+  test("Should correctly build geo shape multilinestring query") {
+    Given("Some multi linestring query")
+    val query = GeoShapeQueryDefinition(
+      "location",
+      InlineShape(
+        MultiLineStringShape(Seq(
+          Seq((102.0, 2.0), (103.0, 2.0), (103.0, 3.0), (102.0, 3.0)),
+          Seq((100.0, 0.0), (101.0, 0.0), (101.0, 1.0), (100.0, 1.0)),
+          Seq((100.2, 0.2), (100.8, 0.2), (100.8, 0.8), (100.2, 0.8))
+        ))
+      )
+    )
+
+    When("Geo shape query is built")
+    val queryBody = GeoShapeQueryBodyFn(query)
+
+    Then("Should have right field and coordinates")
+    queryBody.string() shouldEqual multiLineStringQuery
+  }
+
   test("Should correctly build geo shape circle search query") {
     Given("Some circle query")
     val query = GeoShapeQueryDefinition(
@@ -247,6 +267,24 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     |         "shape":{
     |            "type":"linestring",
     |            "coordinates":[ [-77.03653,38.897676],[-77.009051,38.889939] ]
+    |         }
+    |      }
+    |   }
+    |}
+  """.stripMargin.replaceAllLiterally(" ", "").replace("\n", "")
+
+  def multiLineStringQuery =
+  """
+    |{
+    |   "geo_shape":{
+    |      "location":{
+    |         "shape":{
+    |            "type":"multilinestring",
+    |            "coordinates":[
+    |               [ [102.0,2.0],[103.0,2.0],[103.0,3.0],[102.0,3.0] ],
+    |               [ [100.0,0.0],[101.0,0.0],[101.0,1.0],[100.0,1.0] ],
+    |               [ [100.2,0.2],[100.8,0.2],[100.8,0.8],[100.2,0.8] ]
+    |            ]
     |         }
     |      }
     |   }
