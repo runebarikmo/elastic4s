@@ -1,8 +1,9 @@
 package com.sksamuel.elastic4s.http.search
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.sksamuel.elastic4s.DocumentRef
+import com.sksamuel.elastic4s.http.SourceAsContentBuilder
 import com.sksamuel.elastic4s.json.JacksonSupport
+import com.sksamuel.elastic4s.{AggReader, DocumentRef}
 
 trait AggBucket extends HasAggregations {
   def docCount: Long
@@ -74,10 +75,11 @@ object DateRangeAggResult {
     name,
     data("buckets").asInstanceOf[Seq[Map[String, Any]]].map { map =>
       DateRangeBucket(
-        map.get("from").map(_.toString.toLong),
+        map.get("from").map(_.toString),
         map.get("from_as_string").map(_.toString),
-        map.get("to").map(_.toString.toLong),
+        map.get("to").map(_.toString),
         map.get("to_as_string").map(_.toString),
+        map.get("key").map(_.toString),
         map("doc_count").toString.toLong,
         map
       )
@@ -107,10 +109,11 @@ object GeoHashGridAggResult {
 }
 
 
-case class DateRangeBucket(from: Option[Long],
+case class DateRangeBucket(from: Option[String],
                            fromAsString: Option[String],
-                           to: Option[Long],
+                           to: Option[String],
                            toAsString: Option[String],
+                           key: Option[String],
                            override val docCount: Long,
                            private[elastic4s] val data: Map[String, Any]) extends AggBucket
 
@@ -175,6 +178,12 @@ trait HasAggregations {
 
   private[elastic4s] def data: Map[String, Any]
   private def agg(name: String): Map[String, Any] = data(name).asInstanceOf[Map[String, Any]]
+
+  def to[T: AggReader]: T = safeTo[T].fold(e => throw e, t => t)
+  def safeTo[T: AggReader]: Either[Throwable, T] = {
+    val json = SourceAsContentBuilder(data).string()
+    implicitly[AggReader[T]].read(json)
+  }
 
   def contains(name: String): Boolean = data.contains(name)
   def names: Iterable[String] = data.keys

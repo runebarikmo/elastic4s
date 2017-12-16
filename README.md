@@ -3,7 +3,6 @@ elastic4s - Elasticsearch HTTP and TCP Scala Client
 
 [![Join the chat at https://gitter.im/sksamuel/elastic4s](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sksamuel/elastic4s?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/sksamuel/elastic4s.png?branch=master)](https://travis-ci.org/sksamuel/elastic4s)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.elastic4s/elastic4s-core_2.10.svg?label=latest%20release%20for%202.10"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22elastic4s-core_2.10%22)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.elastic4s/elastic4s-core_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22elastic4s-core_2.11%22)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.elastic4s/elastic4s-core_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22elastic4s-core_2.12%22)
 
@@ -859,6 +858,26 @@ Integration tests run on a local elastic that is created and torn down as part o
 folder. There is no need to configure anything externally.
 
 ## Changelog
+
+###### 6.0.4
+
+* Added to[T] and safeTo[T] on aggregations #1156
+* Added _shard, _node, and _routing to search hit #1160
+* java.lang.NullPointerException in ElasticError.parse #1159
+ 
+###### 6.0.3
+
+* Added track_total_hits option to searches
+* Added get segment to http api
+
+###### 6.0.2
+
+* Added snapshots and repositories to the http api
+
+###### 6.0.1
+
+* Added document exists api #1155
+* Fix partitioned terms aggregation (fixes  #1153)
 
 ###### 6.0.0
 
