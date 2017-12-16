@@ -18,7 +18,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have right field and coordinate")
+    Then("query should have right field and coordinate")
     queryBody.string() shouldEqual pointQuery
   }
 
@@ -34,7 +34,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have right field and corner coordinates")
+    Then("query should have right field and corner coordinates")
     queryBody.string() shouldEqual envelopeQuery
   }
 
@@ -50,7 +50,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have right field and coordinates")
+    Then("query should have right field and coordinates")
     queryBody.string() shouldEqual multiPointQuery
   }
 
@@ -66,7 +66,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have right field and coordinates")
+    Then("query should have right field and coordinates")
     queryBody.string() shouldEqual lineStringQuery
 
   }
@@ -87,7 +87,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have right field and coordinates")
+    Then("query should have right field and coordinates")
     queryBody.string() shouldEqual multiLineStringQuery
   }
 
@@ -103,7 +103,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have right field, coordinates and radius")
+    Then("query should have right field, coordinates and radius")
     queryBody.string() shouldEqual circleQuery
   }
 
@@ -124,7 +124,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have all shapes in collection specified")
+    Then("query should have all shapes in collection specified")
     queryBody.string() shouldEqual geometryCollectionQuery
   }
 
@@ -146,7 +146,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have correct coordinates")
+    Then("query should have correct coordinates")
     queryBody.string() shouldEqual polygonQuery
   }
 
@@ -175,7 +175,7 @@ class GeoShapeQueryBodyFnTest extends FunSuite with Matchers with GivenWhenThen 
     When("Geo shape query is built")
     val queryBody = GeoShapeQueryBodyFn(query)
 
-    Then("Should have correct coordinates")
+    Then("query should have correct coordinates")
     queryBody.string() shouldEqual multiPolygonQuery
   }
 
